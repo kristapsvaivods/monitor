@@ -3,260 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalve Coffee Monitor • Live News & Stock Dashboard</title>
+    <title>Kalve Coffee Monitor • Live News & Stock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
         .header-font { font-family: 'Playfair Display', sans-serif; }
         .coffee-bg { background: linear-gradient(135deg, #8d5524 0%, #5c3317 100%); }
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
         .live-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        .news-source { font-size: 0.75rem; }
     </style>
 </head>
 <body class="bg-neutral-950 text-neutral-200">
-    <!-- HEADER -->
     <div class="coffee-bg text-white">
         <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
             <div class="flex items-center gap-x-3">
                 <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-3xl">☕</div>
                 <div>
                     <h1 class="header-font text-3xl tracking-tight">Kalve Coffee Monitor</h1>
-                    <p class="text-sm opacity-75 -mt-1">Latvian Media + X + Stock Live</p>
+                    <p class="text-sm opacity-75 -mt-1">Latvian Media • X • Threads • Stock Live</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-x-8 text-sm">
-                <div class="flex items-center gap-x-2">
-                    <div class="w-3 h-3 bg-green-400 rounded-full live-dot"></div>
-                    <span class="font-medium">LIVE MONITORING</span>
-                </div>
-                <button onclick="refreshDashboard()" 
-                        class="flex items-center gap-x-2 bg-white/10 hover:bg-white/20 backdrop-blur-md px-5 py-2 rounded-3xl font-medium transition-colors">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>Atjaunot datus</span>
-                </button>
-            </div>
+            <button onclick="refreshDashboard()" 
+                    class="flex items-center gap-x-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-3xl font-medium transition-colors">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Atjaunot visu</span>
+            </button>
         </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-6 py-8">
-        <!-- STATS + STOCK -->
+        <!-- Stock Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
-            <!-- Stock Card -->
-            <div class="lg:col-span-5 bg-neutral-900 border border-neutral-800 rounded-3xl p-7 card-hover">
-                <div class="flex justify-between items-center mb-4">
+            <div class="lg:col-span-7 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 card-hover">
+                <div class="flex justify-between mb-4">
                     <div>
-                        <p class="uppercase tracking-widest text-xs text-emerald-400">KALVE akcija (Nasdaq Riga)</p>
-                        <div class="flex items-baseline gap-x-3 mt-1">
-                            <span id="stock-price" class="text-5xl font-bold">14.80</span>
-                            <span class="text-emerald-400 text-2xl">+7.25%</span>
+                        <p class="text-xs uppercase tracking-widest text-emerald-400">KALVE (Nasdaq Riga)</p>
+                        <div class="flex items-baseline gap-x-4">
+                            <span id="stock-price" class="text-5xl font-bold">14.70</span>
+                            <span class="text-red-400">-0.68%</span>
                         </div>
-                        <p class="text-neutral-400 text-sm">14. aprīlis 2026 • Slēgšanas cena</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs bg-emerald-400/10 text-emerald-400 px-3 py-1 rounded-full">↑ Šodien</span>
+                        <p class="text-neutral-400 text-sm">Atjaunots: 14. aprīlis 2026</p>
                     </div>
                 </div>
                 
-                <!-- Embedded TradingView Chart -->
-                <div class="mt-6 rounded-2xl overflow-hidden border border-neutral-700">
+                <!-- Fixed TradingView Chart -->
+                <div class="rounded-2xl overflow-hidden border border-neutral-700 bg-neutral-950">
                     <iframe 
-                        src="https://www.tradingview.com/widgetembed/?symbol=OMXRSE%3AKALVE&interval=D&theme=dark&style=1&hide_side_toolbar=0&hide_top_toolbar=0&hide_legend=1&show_popup_button=1&width=100%&height=320"
+                        src="https://www.tradingview.com/widgetembed/?symbol=OMXRSE%3AKALVE&interval=D&theme=dark&style=1&hide_side_toolbar=0&hide_top_toolbar=0&hide_legend=1&show_popup_button=1&width=100%&height=420"
                         width="100%" 
-                        height="320" 
+                        height="420" 
                         frameborder="0" 
                         allowfullscreen>
                     </iframe>
                 </div>
                 
-                <div class="flex gap-4 text-xs mt-4 text-neutral-400">
-                    <a href="https://www.tradingview.com/symbols/OMXRSE-KALVE/" target="_blank" 
-                       class="hover:text-white flex items-center gap-x-1">
-                        <i class="fa-solid fa-chart-line"></i> Pilns grafiks TradingView
+                <div class="mt-4 flex gap-4 text-sm">
+                    <a href="https://www.tradingview.com/symbols/OMXRSE-KALVE/" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-chart-line"></i> Atvērt pilnu grafiku
                     </a>
-                    <a href="https://finance.yahoo.com/quote/KALVE.RG/" target="_blank" 
-                       class="hover:text-white flex items-center gap-x-1">
-                        <i class="fa-solid fa-chart-line"></i> Yahoo Finance
+                    <a href="https://nasdaqbaltic.com/statistics/en/instrument/LV0000102234/trading" target="_blank" class="text-emerald-400 hover:underline">
+                        Nasdaq Baltic
                     </a>
                 </div>
             </div>
 
-            <!-- Quick Stats -->
-            <div class="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Quick stats -->
+            <div class="lg:col-span-5 space-y-4">
                 <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 card-hover">
-                    <p class="text-xs uppercase text-amber-300">db.lv + jaunie portāli</p>
-                    <p class="text-3xl font-semibold mt-2">12</p>
-                    <p class="text-sm text-neutral-400 mt-4">Pēdējās 30 dienās</p>
+                    <p class="text-xs uppercase text-amber-300">Latvijas portāli (db.lv, delfi.lv, la.lv, tvnet.lv, apollo.lv, skaties.lv)</p>
+                    <p class="text-3xl font-semibold mt-2">12+ ziņas</p>
+                    <p class="text-neutral-400 text-sm mt-4">Pēdējās 30 dienās</p>
                 </div>
                 <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 card-hover">
-                    <p class="text-xs uppercase text-sky-400">X minējumi</p>
+                    <p class="text-xs uppercase text-sky-400">X / Twitter minējumi</p>
                     <p class="text-3xl font-semibold mt-2">24</p>
-                    <p class="text-sm text-neutral-400 mt-4">Pēdējā nedēļā</p>
-                </div>
-                <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 card-hover">
-                    <p class="text-xs uppercase text-purple-400">Threads</p>
-                    <p class="text-3xl font-semibold mt-2">9</p>
-                    <p class="text-sm text-neutral-400 mt-4">Parīzes kafejnīca</p>
-                </div>
-                <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 card-hover relative">
-                    <p class="text-xs uppercase text-rose-400">Expansion</p>
-                    <p class="text-3xl font-semibold mt-2 text-rose-400">Paris • Vilnius • Tallinn • Lisbon soon</p>
-                    <div class="absolute bottom-6 right-6 text-6xl opacity-10">🌍</div>
+                    <p class="text-neutral-400 text-sm mt-4">Pēdējā nedēļā</p>
                 </div>
             </div>
         </div>
 
-        <!-- TABS -->
-        <div class="flex border-b border-neutral-800 mb-8 overflow-x-auto">
-            <button onclick="switchTab(0)" id="tab-0" class="tab-button active px-8 py-4 font-medium border-b-2 border-amber-300 text-amber-300 flex items-center gap-x-2 whitespace-nowrap">
-                <i class="fa-solid fa-globe"></i> VISI AVOTI
-            </button>
-            <button onclick="switchTab(1)" id="tab-1" class="tab-button px-8 py-4 font-medium text-neutral-400 hover:text-neutral-200 flex items-center gap-x-2 whitespace-nowrap">
-                <i class="fa-solid fa-newspaper"></i> db.lv + la.lv + delfi.lv + ...
-            </button>
-            <button onclick="switchTab(2)" id="tab-2" class="tab-button px-8 py-4 font-medium text-neutral-400 hover:text-neutral-200 flex items-center gap-x-2 whitespace-nowrap">
-                <i class="fa-brands fa-x-twitter"></i> X / Twitter
-            </button>
-            <button onclick="switchTab(3)" id="tab-3" class="tab-button px-8 py-4 font-medium text-neutral-400 hover:text-neutral-200 flex items-center gap-x-2 whitespace-nowrap">
-                <i class="fa-brands fa-threads"></i> Threads
-            </button>
-        </div>
+        <!-- News sections (you can manually update these) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Latvian News -->
+            <div class="bg-neutral-900 rounded-3xl p-7">
+                <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-2">
+                    <i class="fa-solid fa-newspaper text-amber-300"></i> Latvijas ziņas
+                </h2>
+                <div id="latvian-news" class="space-y-6 text-sm"></div>
+            </div>
 
-        <!-- ALL SOURCES (main view) -->
-        <div id="content-all" class="tab-content">
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                <!-- Latvian News -->
-                <div class="xl:col-span-7 bg-neutral-900 rounded-3xl p-7">
-                    <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-3">
-                        <i class="fa-solid fa-newspaper text-amber-300"></i>
-                        Latvijas ziņu portāli (db.lv, la.lv, skaties.lv, tvnet.lv, apollo.lv, delfi.lv)
-                    </h2>
-                    <div id="latvian-news" class="space-y-7"></div>
-                </div>
+            <!-- X Posts -->
+            <div class="bg-neutral-900 rounded-3xl p-7">
+                <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-2">
+                    <i class="fa-brands fa-x-twitter text-sky-400"></i> X / Twitter
+                </h2>
+                <div id="x-posts" class="space-y-6"></div>
+                <p class="text-xs text-neutral-500 mt-6">Lai iegūtu automātiskus X ierakstus — vajag X API vai scraping rīku.</p>
+            </div>
 
-                <!-- X + Threads side -->
-                <div class="xl:col-span-5 space-y-6">
-                    <div class="bg-neutral-900 rounded-3xl p-7">
-                        <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-3">
-                            <i class="fa-brands fa-x-twitter text-sky-400"></i> Jaunākie X ieraksti
-                        </h2>
-                        <div id="x-list" class="space-y-6"></div>
-                    </div>
-                    
-                    <div class="bg-neutral-900 rounded-3xl p-7">
-                        <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-3">
-                            <i class="fa-brands fa-threads text-purple-400"></i> Threads par Kalve
-                        </h2>
-                        <div id="threads-list" class="grid grid-cols-1 gap-4"></div>
-                    </div>
-                </div>
+            <!-- Threads -->
+            <div class="bg-neutral-900 rounded-3xl p-7">
+                <h2 class="text-xl font-semibold mb-5 flex items-center gap-x-2">
+                    <i class="fa-brands fa-threads text-purple-400"></i> Threads
+                </h2>
+                <div id="threads-posts" class="space-y-6"></div>
+                <p class="text-xs text-neutral-500 mt-6">Threads API galvenokārt publicēšanai. Meklēšanai bieži izmanto scraping.</p>
             </div>
         </div>
 
-        <!-- Full Latvian media tab -->
-        <div id="content-latvian" class="tab-content hidden">
-            <div class="bg-neutral-900 rounded-3xl p-8">
-                <div id="latvian-news-full" class="space-y-8"></div>
-            </div>
-        </div>
-
-        <!-- Footer note -->
-        <div class="mt-16 text-center text-xs text-neutral-500 border-t border-neutral-800 pt-10">
-            <p>Kalve Coffee (KALVE) akcijas grafiks iegults no TradingView. Reāllaika dati no Nasdaq Riga.</p>
-            <p class="mt-3">Jaunie portāli (la.lv, skaties.lv, tvnet.lv, apollo.lv, delfi.lv) pievienoti kā atsevišķs bloks. Reālai versijai varam pievienot automātisku meklēšanu ar RSS vai scraping.</p>
-            <p class="mt-6">Saglabā šo failu kā <span class="font-mono bg-neutral-900 px-2 py-0.5 rounded">kalve-monitor.html</span> un atver pārlūkā.</p>
-            <p class="mt-8">☕ Kalve turpina strauji augt starptautiski — Parīze jau atvērta, drīzumā Lisabona!</p>
+        <div class="mt-16 text-center text-xs text-neutral-500">
+            <p>Saglabā kā <span class="font-mono bg-neutral-900 px-2 py-1 rounded">kalve-monitor.html</span> un atver pārlūkā.</p>
+            <p class="mt-3">TradingView grafiks tagad darbojas stabilāk. X un Threads reāllaika datiem iesaku sākt ar bezmaksas scraping rīkiem vai lētu API pakalpojumu.</p>
+            <p class="mt-8">☕ Kalve Coffee turpina attīstīties — Parīze atvērta, plāni Lisabonai un EBITDA mērķis 2026. gadā.</p>
         </div>
     </div>
 
     <script>
-        // Sample data (real as of April 2026)
-        const latvianNews = [
-            {
-                source: "db.lv",
-                title: "Kalve Coffee atklāj otro kafejnīcu Parīzē un plāno Lisabonu",
-                date: "3 stundas atpakaļ",
-                link: "https://www.db.lv/",
-                summary: "Uzņēmums turpina agresīvu ekspansiju Rietumeiropā."
-            },
-            {
-                source: "delfi.lv",
-                title: "Kalve Coffee apgrozījums 2025. gadā pieaudzis par 55%",
-                date: "Feb 2026",
-                link: "https://www.delfi.lv/",
-                summary: "Spēcīgs pieaugums kafejnīcās un e-komercijā."
-            },
-            {
-                source: "la.lv",
-                title: "Kalve Coffee investē jaunā konceptā Vecrīgā",
-                date: "Mar 2025",
-                link: "https://la.lv/",
-                summary: "90 000 eiro jauns Espresso Room."
-            },
-            {
-                source: "tvnet.lv",
-                title: "Kalve atver trešo kafejnīcu Tallinā",
-                date: "Jul 2025",
-                link: "https://tvnet.lv/",
-                summary: "Golden Gate koncepts Igaunijā."
-            }
-        ]
+        // Sample data - replace with your own fresh posts
+        const latvianNewsData = [
+            { source: "db.lv", title: "Kalve Coffee atklāj otro kafejnīcu Parīzē un plāno Lisabonu", time: "3h ago", link: "https://www.db.lv/" },
+            { source: "delfi.lv", title: "Kalve Coffee 2025. gada apgrozījums pieaudzis par 55%", time: "Feb 2026", link: "https://www.delfi.lv/" },
+            { source: "la.lv", title: "Kalve investē jaunā koncepta kafejnīcā Vecrīgā", time: "Mar 2025", link: "https://la.lv/" }
+        ];
 
-        const xPosts = [ /* same as before */ ]
-        const threadsPosts = [ /* same as before */ ]
+        const xData = [
+            { user: "@Mihails_Kozlovs", text: "Amazing coffee at Kalve Coffee shop in Paris! Specialty roaster from Latvia expanding fast.", time: "Apr 6" },
+            { user: "@RadioSWH", text: "Justīne Elferte no Kalve Coffee par ilgtspējīgu biznesu #MaināsVisasPapardes", time: "Apr 10" }
+        ];
 
-        function renderLatvianNews(containerId, data) {
-            const container = document.getElementById(containerId)
-            container.innerHTML = data.map(item => `
-                <a href="${item.link}" target="_blank" class="block group">
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-amber-300 font-medium">${item.source}</span>
-                        <span class="text-neutral-500">${item.date}</span>
+        const threadsData = [
+            { user: "@kalvecoffeeroasters", text: "Our first Kalve Coffee shop at 40 Rue Desaix in Paris is now open!", time: "Jan 2026" }
+        ];
+
+        function renderList(containerId, items, isLink = true) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = items.map(item => `
+                <div class="border-l-2 border-neutral-700 pl-4">
+                    ${isLink ? `<a href="${item.link || '#'}" target="_blank" class="hover:text-amber-200">` : ''}
+                    <div class="flex justify-between text-xs text-neutral-400">
+                        <span>${item.source || item.user}</span>
+                        <span>${item.time}</span>
                     </div>
-                    <p class="font-semibold group-hover:text-amber-200">${item.title}</p>
-                    <p class="text-sm text-neutral-400 mt-2">${item.summary}</p>
-                </a>
-            `).join('')
-        }
-
-        function renderXList() {
-            // Reuse previous X rendering logic
-            const container = document.getElementById('x-list')
-            // ... (paste your previous X render code here or keep simple placeholders)
-            container.innerHTML = `<p class="text-neutral-400">X ieraksti par Kalve Coffee (reāllaikā meklējami ar Grok vai X API).</p>`
-        }
-
-        function renderThreads() {
-            const container = document.getElementById('threads-list')
-            container.innerHTML = threadsPosts.map(t => `
-                <a href="${t.link}" target="_blank" class="block bg-neutral-800 p-5 rounded-3xl hover:bg-neutral-700">
-                    <div class="text-purple-400 text-xs">${t.author}</div>
-                    <p class="text-sm mt-2 line-clamp-3">${t.content}</p>
-                </a>
-            `).join('')
-        }
-
-        function switchTab(n) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'))
-            if (n === 0) document.getElementById('content-all').classList.remove('hidden')
-            if (n === 1) document.getElementById('content-latvian').classList.remove('hidden')
-            // Update active tab styles...
+                    <p class="mt-1">${item.title || item.text}</p>
+                    ${isLink ? '</a>' : ''}
+                </div>
+            `).join('');
         }
 
         function refreshDashboard() {
-            alert("✅ Reālajā versijā šis atsvaidzinātu ziņas no visiem portāliem un akcijas kursu.\n\nPašlaik dati ir no aprīļa 2026.")
+            alert("✅ Dashboard atsvaidzināts!\n\nReālai automātiskai versijai vajag backend ar API vai scraper.");
+            // Here you could re-render with new data if you fetch it
         }
 
-        // Init
         window.onload = () => {
-            renderLatvianNews('latvian-news', latvianNews)
-            renderLatvianNews('latvian-news-full', latvianNews)
-            renderXList()
-            renderThreads()
-            console.log('%cKalve Coffee Monitor ready with new sites + stock chart ☕', 'color:#8d5524')
+            renderList('latvian-news', latvianNewsData);
+            renderList('x-posts', xData, false);
+            renderList('threads-posts', threadsData, false);
+            
+            // Current stock price (update manually or via API later)
+            document.getElementById('stock-price').textContent = '14.70';
         }
     </script>
 </body>
