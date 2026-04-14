@@ -19,12 +19,12 @@
                 <div class="w-14 h-14 bg-white rounded-3xl flex items-center justify-center text-5xl">☕</div>
                 <div>
                     <h1 class="header-font text-4xl">Kalve Coffee Monitor</h1>
-                    <p class="text-amber-100">Latvian & Coffee Industry News</p>
+                    <p class="text-amber-100">Auto RSS + Live Price</p>
                 </div>
             </div>
             
-            <!-- Dynamic Price Box (Top Right) -->
-            <div class="bg-neutral-900/70 backdrop-blur-md px-6 py-4 rounded-3xl border border-neutral-700 text-right">
+            <!-- Dynamic KALVE Price (Top Right) -->
+            <div class="bg-neutral-900/80 backdrop-blur-md px-6 py-4 rounded-3xl border border-neutral-700 text-right min-w-[200px]">
                 <div class="text-xs uppercase tracking-widest text-neutral-400">KALVE cena</div>
                 <div class="flex items-baseline justify-end gap-3">
                     <span id="kalve-price" class="text-4xl font-bold">14.70</span>
@@ -36,109 +36,109 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-6 py-10">
-        <!-- News Section -->
         <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
             <i class="fa-solid fa-newspaper text-amber-300"></i>
-            Jaunākās ziņas par Kalve Coffee un kafijas industriju
+            Jaunākās ziņas par Kalve Coffee
         </h2>
 
         <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Populated by JS -->
-        </div>
-
-        <div class="mt-16 text-center text-neutral-500 text-xs">
-            Monitor includes Latvian media + general coffee industry sources • Price updates live via Yahoo Finance
+            <div class="col-span-3 text-center py-12 text-neutral-400" id="loading">
+                <i class="fa-solid fa-spinner fa-spin text-3xl mb-4"></i><br>
+                Ielādē RSS ziņas...
+            </div>
         </div>
     </div>
 
     <script>
-        // Dynamic KALVE Price
+        // === Dynamic KALVE Price ===
         async function fetchKalvePrice() {
             try {
                 const res = await fetch('https://query1.finance.yahoo.com/v7/finance/quote?symbols=KALVE.RG');
                 const data = await res.json();
                 const q = data.quoteResponse.result[0];
-
                 if (q) {
                     const price = q.regularMarketPrice.toFixed(2);
-                    const changePct = q.regularMarketChangePercent.toFixed(2);
-                    const isUp = changePct >= 0;
+                    const pct = q.regularMarketChangePercent.toFixed(2);
+                    const isUp = pct >= 0;
 
                     document.getElementById('kalve-price').textContent = price;
                     const changeEl = document.getElementById('kalve-change');
-                    changeEl.textContent = `${isUp ? '+' : ''}${changePct}%`;
+                    changeEl.textContent = `${isUp ? '+' : ''}${pct}%`;
                     changeEl.className = `text-2xl font-medium ${isUp ? 'text-emerald-400' : 'text-red-400'}`;
                     document.getElementById('kalve-date').textContent = `Atjaunināts: ${new Date().toLocaleString('lv-LV')}`;
                 }
             } catch (e) {
-                console.log("Price fetch failed – using fallback");
+                console.log("Price fetch failed");
             }
         }
 
-        // News data (Kalve + general coffee industry)
-        const newsData = [
-            {
-                source: "db.lv",
-                title: "Kalve Coffee atklāj otro kafejnīcu Parīzē un plāno Lisabonu",
-                link: "https://www.db.lv/",
-                time: "Apr 2026",
-                summary: "Uzņēmums turpina strauju ekspansiju Eiropā."
-            },
-            {
-                source: "delfi.lv",
-                title: "Kalve Coffee apgrozījums 2025. gadā pieaudzis par 55%",
-                link: "https://www.delfi.lv/",
-                time: "Feb 2026",
-                summary: "Rekordaugsts apgrozījums un plāni Portugālei."
-            },
-            {
-                source: "lsm.lv",
-                title: "Kalve Coffee plans to expand to Portugal",
-                link: "https://eng.lsm.lv/article/economy/business/20.02.2026-kalve-coffee-plans-to-expand-to-portugal.a635559/",
-                time: "Feb 2026",
-                summary: "EBITDA mērķis 2026. gadā ap 400 000 €."
-            },
-            {
-                source: "Perfect Daily Grind",
-                title: "Specialty coffee is maturing in the Baltics",
-                link: "https://perfectdailygrind.com/2026/04/baltic-specialty-coffee-market/",
-                time: "Apr 2026",
-                summary: "Baltic chains expanding internationally."
-            },
-            {
-                source: "World Coffee Portal",
-                title: "Latvia's Kalve Coffee achieves record revenues",
-                link: "https://www.worldcoffeeportal.com/news/latvias-kalve-coffee-achieves-record-revenues-and-profits-in-2024/",
-                time: "2025",
-                summary: "Strong growth ahead of Western Europe push."
-            },
-            {
-                source: "Kalve Coffee",
-                title: "Roast Masters 2025: A path to victory",
-                link: "https://kalvecoffee.com/blogs/news",
-                time: "Apr 2025",
-                summary: "Raimonds Selga shares experience from World Coffee Championships."
-            }
+        // === Automatic RSS Fetch using public proxy ===
+        const rssFeeds = [
+            "https://www.delfi.lv/rss",
+            "https://www.tvnet.lv/rss",
+            "https://www.db.lv/rss",
+            "https://eng.lsm.lv/rss/?lang=en&catid=315"   // English LSM for broader coverage
         ];
 
-        function renderNews() {
+        async function fetchRSS() {
             const container = document.getElementById('news-container');
-            container.innerHTML = newsData.map(item => `
-                <a href="${item.link}" target="_blank" class="block bg-neutral-900 rounded-3xl p-6 hover:bg-neutral-800 transition-colors border border-neutral-800 hover:border-amber-300/30">
-                    <div class="flex justify-between text-xs mb-3">
-                        <span class="px-3 py-1 bg-amber-300/10 text-amber-300 rounded-full">${item.source}</span>
-                        <span class="text-neutral-500">${item.time}</span>
-                    </div>
-                    <h3 class="font-semibold leading-tight mb-2">${item.title}</h3>
-                    <p class="text-sm text-neutral-400">${item.summary}</p>
-                </a>
-            `).join('');
+            const loading = document.getElementById('loading');
+            let foundArticles = 0;
+
+            for (const feedUrl of rssFeeds) {
+                try {
+                    // Use allorigins proxy to bypass CORS
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
+                    const res = await fetch(proxyUrl);
+                    const data = await res.json();
+                    const text = data.contents;
+
+                    // Simple XML parsing (we look for <item> tags)
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(text, "text/xml");
+                    const items = xml.querySelectorAll("item");
+
+                    items.forEach(item => {
+                        const title = item.querySelector("title") ? item.querySelector("title").textContent : "";
+                        const link = item.querySelector("link") ? item.querySelector("link").textContent : "#";
+                        const pubDate = item.querySelector("pubDate") ? item.querySelector("pubDate").textContent : "";
+                        const description = item.querySelector("description") ? item.querySelector("description").textContent : "";
+
+                        if (title.toLowerCase().includes("kalve") || description.toLowerCase().includes("kalve")) {
+                            const articleHTML = `
+                                <a href="${link}" target="_blank" class="block bg-neutral-900 rounded-3xl p-6 hover:bg-neutral-800 transition-colors border border-neutral-800 hover:border-amber-300/30">
+                                    <div class="flex justify-between text-xs mb-3">
+                                        <span class="px-3 py-1 bg-amber-300/10 text-amber-300 rounded-full">${new URL(feedUrl).hostname}</span>
+                                        <span class="text-neutral-500">${new Date(pubDate).toLocaleDateString('lv-LV')}</span>
+                                    </div>
+                                    <h3 class="font-semibold leading-tight mb-2">${title}</h3>
+                                    <p class="text-sm text-neutral-400 line-clamp-3">${description.replace(/<[^>]+>/g, '').substring(0, 160)}...</p>
+                                </a>
+                            `;
+                            container.innerHTML += articleHTML;
+                            foundArticles++;
+                        }
+                    });
+                } catch (err) {
+                    console.log(`Failed to load ${feedUrl}`);
+                }
+            }
+
+            loading.style.display = 'none';
+
+            if (foundArticles === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-16 text-neutral-400">
+                        Pašlaik nav jaunu ziņu ar "Kalve".<br>
+                        <span class="text-xs">Pārbaudi vēlāk vai pievieno vairāk avotu.</span>
+                    </div>`;
+            }
         }
 
-        // Initialize
+        // Initialize everything
         window.onload = () => {
             fetchKalvePrice();
-            renderNews();
+            fetchRSS();
         };
     </script>
 </body>
