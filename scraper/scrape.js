@@ -1,3 +1,4 @@
+import Parser from 'rss-parser';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
@@ -5,63 +6,74 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const parser = new Parser();
 
-const sources = [
-    { name: "db.lv", url: "https://www.db.lv/zinas", selector: "article" },
-    { name: "delfi.lv", url: "https://www.delfi.lv/", selector: ".article" },
-    // Add more specific search URLs if needed (e.g. ?s=kalve)
+const rssFeeds = [
+    { name: "delfi.lv", url: "https://www.delfi.lv/rss" },
+    { name: "tvnet.lv", url: "https://www.tvnet.lv/rss" },
+    { name: "apollo.lv", url: "https://www.apollo.lv/rss" },
+    { name: "db.lv",     url: "https://www.db.lv/rss" },
 ];
 
-async function scrape() {
-    const articles = [];
+const articles = [];
 
-    for (const source of sources) {
+async function scrapeRSS() {
+    console.log("Fetching RSS feeds...");
+
+    for (const feed of rssFeeds) {
         try {
-            const { data } = await axios.get(source.url, { timeout: 10000 });
-            const $ = cheerio.load(data);
-
-            // Very basic generic extraction — you can improve selectors per site
-            $(source.selector).slice(0, 5).each((i, el) => {
-                const title = $(el).find('h2, h3, .title').first().text().trim();
-                const link = $(el).find('a').first().attr('href');
-                const time = $(el).find('time, .date').first().text().trim();
-
-                if (title && link && title.toLowerCase().includes('kalve')) {
+            const feedData = await parser.parseURL(feed.url);
+            
+            feedData.items.forEach(item => {
+                const title = item.title || '';
+                const content = (item.contentSnippet || item.content || '').toLowerCase();
+                
+                if (title.toLowerCase().includes('kalve') || content.includes('kalve')) {
                     articles.push({
-                        source: source.name,
+                        source: feed.name,
                         title: title,
-                        link: link.startsWith('http') ? link : `https://www.${source.name}${link}`,
-                        time: time || 'Recently',
-                        summary: ''
+                        link: item.link,
+                        time: item.pubDate ? new Date(item.pubDate).toLocaleDateString('lv-LV') : 'Recently',
+                        summary: item.contentSnippet ? item.contentSnippet.substring(0, 180) + '...' : ''
                     });
                 }
             });
+            
+            console.log(`✓ ${feed.name}: ${feedData.items.length} items checked`);
         } catch (err) {
-            console.log(`Failed to scrape ${source.name}:`, err.message);
+            console.log(`✗ Failed to fetch ${feed.name}:`, err.message);
         }
     }
+}
 
-    // Add some fallback real recent news about Kalve (you can remove later)
-    if (articles.length === 0) {
-        articles.push({
-            source: "lsm.lv",
-            title: "Kalve Coffee plans to expand to Portugal",
-            link: "https://eng.lsm.lv/article/economy/business/20.02.2026-kalve-coffee-plans-to-expand-to-portugal.a635559/",
-            time: "Feb 2026",
-            summary: "EBITDA target around €400,000 in 2026"
-        });
-    }
+async function fallbackScrape() {
+    // Light fallback for la.lv and skaties.lv if needed
+    console.log("Running fallback scrape for other sites...");
+    // You can expand this later if RSS is not enough
+}
+
+async function main() {
+    await scrapeRSS();
+    // await fallbackScrape();   // uncomment if you want to add more
 
     const output = {
-        lastUpdated: new Date().toLocaleString('lv-LV', { timeZone: 'Europe/Riga' }),
-        articles: articles.slice(0, 12)
+        lastUpdated: new Date().toLocaleString('lv-LV', { 
+            timeZone: 'Europe/Riga',
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+        }),
+        articles: articles.slice(0, 15)   // limit to 15 newest relevant
     };
 
     const dataDir = join(__dirname, '../data');
-    if (!existsSync(dataDir)) mkdirSync(dataDir);
+    if (!existsSync(dataDir)) mkdirSync(dataDir, { recursive: true });
 
     writeFileSync(join(dataDir, 'news.json'), JSON.stringify(output, null, 2));
-    console.log(`✅ Scraped ${articles.length} articles at ${output.lastUpdated}`);
+    
+    console.log(`✅ Done! Saved ${articles.length} relevant Kalve articles.`);
 }
 
-scrape();
+main().catch(err => {
+    console.error("Critical error:", err);
+    process.exit(1);
+});
